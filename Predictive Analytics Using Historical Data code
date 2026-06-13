@@ -1,0 +1,85 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, r2_score
+
+data = {
+    "Month":[1,2,3,4,5,6,7,8,9,10,11,12],
+    "Sales":[1000,1200,1300,1500,1700,1800,2000,2200,2400,2600,2800,3000]
+}
+
+df = pd.DataFrame(data)
+
+print("Dataset")
+display(df)
+
+X = df[["Month"]]
+y = df["Sales"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)
+
+model = LinearRegression()
+
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+results = pd.DataFrame({
+    "Actual Sales": y_test.values,
+    "Predicted Sales": y_pred
+})
+
+print("Prediction Results")
+display(results)
+
+mae = mean_absolute_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print("Mean Absolute Error:", round(mae, 2))
+print("R2 Score:", round(r2, 2))
+
+plt.figure(figsize=(8,5))
+
+plt.scatter(
+    X,
+    y,
+    label="Actual Sales"
+)
+
+plt.plot(
+    X,
+    model.predict(X),
+    label="Predicted Trend"
+)
+
+plt.xlabel("Month")
+plt.ylabel("Sales")
+plt.title("Sales Forecasting Using Linear Regression")
+plt.legend()
+
+plt.show()
+
+future_months = pd.DataFrame({
+    "Month":[13,14,15,16]
+})
+
+future_sales = model.predict(future_months)
+
+forecast = pd.DataFrame({
+    "Month":[13,14,15,16],
+    "Predicted Sales":future_sales
+})
+
+print("Future Sales Forecast")
+display(forecast)
+
+print("Sales show a positive growth trend over time.")
+print("The regression model successfully predicts future sales.")
+print("Forecasting helps businesses plan inventory and resources.")
